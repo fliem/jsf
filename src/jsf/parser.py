@@ -95,6 +95,11 @@ class JSF:
         elif "type" in schema:
             if item_type == "object" and "properties" in schema:
                 return self.__parse_object(name, path, schema)
+            elif item_type == "object" and "oneOf" in schema:
+                schemas = []
+                for d in schema["oneOf"]:
+                    schemas.append(self.__parse_definition(name, path, d))
+                return OneOf(name=name, path=path, schemas=schemas, **schema)
             elif item_type == "array":
                 if (schema.get("contains") is not None) or isinstance(schema.get("items"), dict):
                     return self.__parse_array(name, path, schema)
